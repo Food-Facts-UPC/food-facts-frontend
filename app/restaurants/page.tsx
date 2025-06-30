@@ -8,9 +8,9 @@ import { Restaurant } from '@/components/Map';
 
 // Datos de ejemplo para los restaurantes
 const restaurants: Restaurant[] = [
-  { id: 1, name: 'Restaurante Vegano GreenLeaf', position: [40.416775, -3.703790], address: 'Calle de la Montera, 32, Madrid' },
-  { id: 2, name: 'Sabor Fresco & Natural', position: [41.385063, 2.173404], address: 'Plaça de Catalunya, 1, Barcelona' },
-  { id: 3, name: 'El Rincón Saludable', position: [39.470242, -0.376800], address: 'Carrer de Colón, 60, Valencia' },
+  { id: 1, name: 'La Nevera Fit', position: [-12.1195, -77.0342], address: 'Calle General Recavarren 435, Miraflores' },
+  { id: 2, name: 'Armónica Café', position: [-12.1225, -77.0307], address: 'Av. Mariscal La Mar 1167, Miraflores' },
+  { id: 3, name: 'Limaná', position: [-12.1088, -77.0335], address: 'Av. Augusto Pérez Araníbar 2011, San Isidro' },
 ];
 
 export default function RestaurantsPage() {
