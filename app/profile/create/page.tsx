@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User, MapPin, Mail, Phone, Home, Globe } from "lucide-react";
+import { profilesApi } from "@/lib/services/profilesApi";
 
 export default function CreateProfilePage() {
   const [firstName, setFirstName] = useState("");

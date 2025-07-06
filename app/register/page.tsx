@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, User, Lock, ArrowRight, AlertCircle, CheckCircle, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { authApi } from "@/lib/services/authApi";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");

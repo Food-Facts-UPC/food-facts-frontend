@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api } from "@/lib/services/api";
 import { Restaurant } from "@/components/Map"; // Reutilizamos la interfaz Restaurant
+import { restaurantsApi } from "@/lib/services/restaurantsApi";
 
 // Extender la interfaz Restaurant para incluir latitude y longitude
 interface RestaurantDetails extends Restaurant {

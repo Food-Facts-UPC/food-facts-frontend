@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Restaurant } from "@/components/Map";
+import { api } from "@/lib/services/api";
+import { profilesApi } from "@/lib/services/profilesApi";
 
 export default function FavoriteRestaurantsPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -27,7 +28,7 @@ export default function FavoriteRestaurantsPage() {
 
     try {
       setLoading(true);
-      const profileData = await api.profiles.getById(); // Call without ID
+      const profileData = await api.profiles.getMe();
       setProfile(profileData);
 
       const allRestaurants = await api.restaurants.getAll();

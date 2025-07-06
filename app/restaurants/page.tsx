@@ -8,6 +8,7 @@ import { api } from '@/lib/services/api';
 import { Restaurant } from '@/components/Map';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { restaurantsApi } from '@/lib/services/restaurantsApi';
 
 // Extender la interfaz Restaurant para incluir latitude y longitude
 interface RestaurantWithCoords extends Restaurant {
