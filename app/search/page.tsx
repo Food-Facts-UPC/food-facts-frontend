@@ -1,14 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { api } from "@/lib/services/api";
-import { Restaurant } from "@/components/Map"; // Reutilizamos la interfaz Restaurant
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function SearchPage({ searchParams }: { searchParams: { query: string } }) {
-  const initialQuery = searchParams.query || '';
+// Definir interfaz específica para la página de búsqueda
+interface Restaurant {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  stars: number;
+  tags: string[];
+}
+
+export default function SearchPage({ searchParams }: { searchParams: Promise<{ query?: string }> }) {
+  const resolvedSearchParams = use(searchParams);
+  const initialQuery = resolvedSearchParams.query || '';
   const [query, setQuery] = useState(initialQuery);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,7 +36,7 @@ export default function SearchPage({ searchParams }: { searchParams: { query: st
     }
 
     try {
-      const data = await restaurantsApi.getByTag(query);
+      const data = await api.restaurants.getByTag(query);
       setRestaurants(data);
     } catch (err) {
       setError("Failed to search restaurants by tag.");
@@ -87,7 +97,12 @@ export default function SearchPage({ searchParams }: { searchParams: { query: st
                   <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 group">
                     <div className="p-5">
                       <h3 className="font-bold text-xl truncate group-hover:text-green-600 transition-colors duration-300">{restaurant.name}</h3>
-                      <p className="text-gray-600 text-sm">{restaurant.address}</p>
+                      <p className="text-gray-600 text-sm">
+                        ⭐ {restaurant.stars}/5 • {restaurant.tags.join(', ')}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-1">
+                        Lat: {restaurant.latitude.toFixed(4)}, Lng: {restaurant.longitude.toFixed(4)}
+                      </p>
                     </div>
                   </div>
                 </Link>
