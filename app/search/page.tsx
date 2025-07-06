@@ -1,42 +1,48 @@
-import axios from 'axios';
-import Link from 'next/link';
-import Image from 'next/image';
+"use client";
 
-// Definimos un tipo para los productos que recibimos de la API
-interface Product {
-  code: string;
-  product_name: string;
-  image_url: string;
-}
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { api } from "@/lib/services/api";
+import { Restaurant } from "@/components/Map"; // Reutilizamos la interfaz Restaurant
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-// Función para buscar productos en la API de Open Food Facts
-async function searchProducts(query: string): Promise<Product[]> {
-  if (!query) return [];
+export default function SearchPage({ searchParams }: { searchParams: { query: string } }) {
+  const initialQuery = searchParams.query || '';
+  const [query, setQuery] = useState(initialQuery);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    const response = await axios.get(`https://world.openfoodfacts.org/cgi/search.pl`, {
-      params: {
-        search_terms: query,
-        search_simple: 1,
-        action: 'process',
-        json: 1,
-        page_size: 20, // Traemos hasta 20 resultados
-      }
-    });
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    setRestaurants([]);
 
-    if (response.data.products) {
-      return response.data.products.filter((p: any) => p.code && p.product_name && p.image_url);
+    if (!query) {
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error("Error fetching data from Open Food Facts:", error);
-  }
 
-  return [];
-}
+    try {
+      const data = await api.restaurants.getByTag(query);
+      setRestaurants(data);
+    } catch (err) {
+      setError("Failed to search restaurants by tag.");
+      console.error("Search error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-export default async function SearchPage({ searchParams }: { searchParams: { query: string } }) {
-  const query = searchParams.query || '';
-  const products = await searchProducts(query);
+  // Ejecutar la búsqueda inicial si hay un query en los parámetros de la URL
+  useEffect(() => {
+    if (initialQuery) {
+      setQuery(initialQuery);
+      handleSearch({ preventDefault: () => {} } as React.FormEvent); // Simular evento para ejecutar la búsqueda
+    }
+  }, [initialQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white text-gray-800">
@@ -47,21 +53,22 @@ export default async function SearchPage({ searchParams }: { searchParams: { que
           </Link>
           {/* Formulario de Búsqueda en el Header */}
           <div className="w-full max-w-md">
-            <form action="/search" method="GET">
+            <form onSubmit={handleSearch}>
               <div className="flex items-center bg-gray-100 rounded-full shadow-inner">
-                <input
+                <Input
                   type="text"
-                  name="query"
-                  defaultValue={query}
-                  placeholder="Busca otro alimento..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Busca restaurantes por etiqueta..."
                   className="w-full px-6 py-3 text-lg text-gray-700 bg-transparent rounded-full focus:outline-none"
                 />
-                <button
+                <Button
                   type="submit"
                   className="px-6 py-3 font-bold text-white bg-green-600 rounded-full hover:bg-green-700 focus:outline-none transition-colors duration-300"
+                  disabled={loading}
                 >
-                  Buscar
-                </button>
+                  {loading ? "Buscando..." : "Buscar"}
+                </Button>
               </div>
             </form>
           </div>
@@ -69,24 +76,18 @@ export default async function SearchPage({ searchParams }: { searchParams: { que
       </header>
 
       <main className="container mx-auto p-4 md:p-8">
-        {query && products.length > 0 && (
+        {error && <p className="text-red-500 text-center mb-4">Error: {error}</p>}
+
+        {query && restaurants.length > 0 && (
           <div>
             <h1 className="text-4xl font-bold mb-8">Resultados para "{query}"</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {products.map((product) => (
-                <Link key={product.code} href={`/product/${product.code}`}>
+              {restaurants.map((restaurant) => (
+                <Link key={restaurant.id} href={`/product/${restaurant.id}`}>
                   <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 group">
-                    <div className="relative h-56 w-full">
-                      <Image
-                        src={product.image_url}
-                        alt={product.product_name}
-                        layout="fill"
-                        objectFit="cover"
-                        className="group-hover:opacity-90 transition-opacity duration-300"
-                      />
-                    </div>
                     <div className="p-5">
-                      <h3 className="font-bold text-xl truncate group-hover:text-green-600 transition-colors duration-300">{product.product_name}</h3>
+                      <h3 className="font-bold text-xl truncate group-hover:text-green-600 transition-colors duration-300">{restaurant.name}</h3>
+                      <p className="text-gray-600 text-sm">{restaurant.address}</p>
                     </div>
                   </div>
                 </Link>
@@ -95,17 +96,17 @@ export default async function SearchPage({ searchParams }: { searchParams: { que
           </div>
         )}
 
-        {query && products.length === 0 && (
+        {query && !loading && restaurants.length === 0 && (
           <div className="text-center py-20">
-            <h1 className="text-3xl font-bold mb-4">No se encontraron resultados para "{query}"</h1>
-            <p className="text-xl text-gray-600">Intenta con otra búsqueda o verifica la ortografía.</p>
+            <h1 className="text-3xl font-bold mb-4">No se encontraron restaurantes para "{query}"</h1>
+            <p className="text-xl text-gray-600">Intenta con otra etiqueta o verifica la ortografía.</p>
           </div>
         )}
 
         {!query && (
           <div className="text-center py-20">
             <h1 className="text-3xl font-bold mb-4">Realiza una búsqueda</h1>
-            <p className="text-xl text-gray-600">Introduce un término en la barra de búsqueda para empezar.</p>
+            <p className="text-xl text-gray-600">Introduce una etiqueta en la barra de búsqueda para empezar.</p>
           </div>
         )}
       </main>

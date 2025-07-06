@@ -1,58 +1,68 @@
+"use client";
 
-import axios from 'axios';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { api } from "@/lib/services/api";
+import { Restaurant } from "@/components/Map"; // Reutilizamos la interfaz Restaurant
 
-// Tipos para los datos del producto
-interface ProductDetails {
-  code: string;
-  product_name: string;
-  image_url: string;
-  ingredients_text_es: string;
-  nutriments: {
-    [key: string]: string | number;
-  };
-  nutriscore_grade: string;
+// Extender la interfaz Restaurant para incluir latitude y longitude
+interface RestaurantDetails extends Restaurant {
+  latitude: number;
+  longitude: number;
 }
 
-// Función para obtener los detalles de un producto
-async function getProductDetails(code: string): Promise<ProductDetails | null> {
-  if (!code) return null;
+export default function RestaurantDetailsPage({ params }: { params: { code: string } }) {
+  const restaurantId = params.code; // Asumimos que 'code' es el ID del restaurante
+  const [restaurant, setRestaurant] = useState<RestaurantDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    const response = await axios.get(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
-    if (response.data.status === 1) {
-      return response.data.product as ProductDetails;
+  useEffect(() => {
+    const fetchRestaurantDetails = async () => {
+      try {
+        const data = await api.restaurants.getById(restaurantId);
+        setRestaurant(data);
+      } catch (err) {
+        setError("Failed to fetch restaurant details.");
+        console.error("Error fetching restaurant details:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (restaurantId) {
+      fetchRestaurantDetails();
     }
-  } catch (error) {
-    console.error("Error fetching product details:", error);
+  }, [restaurantId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p>Cargando detalles del restaurante...</p>
+      </div>
+    );
   }
 
-  return null;
-}
-
-// Mapeo de nutrientes a nombres legibles
-const nutrientMapping: { [key: string]: string } = {
-  'energy-kcal_100g': 'Calorías (kcal)',
-  'fat_100g': 'Grasas (g)',
-  'saturated-fat_100g': 'Grasas Saturadas (g)',
-  'carbohydrates_100g': 'Carbohidratos (g)',
-  'sugars_100g': 'Azúcares (g)',
-  'fiber_100g': 'Fibra (g)',
-  'proteins_100g': 'Proteínas (g)',
-  'salt_100g': 'Sal (g)',
-};
-
-export default async function ProductPage({ params }: { params: { code: string } }) {
-  const product = await getProductDetails(params.code);
-
-  if (!product) {
+  if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Producto no encontrado</h1>
-          <Link href="/" className="text-green-600 hover:underline mt-4 block">
-            Volver al inicio
+          <h1 className="text-2xl font-bold text-red-500">Error: {error}</h1>
+          <Link href="/restaurants" className="text-green-600 hover:underline mt-4 block">
+            Volver a la lista de restaurantes
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!restaurant) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Restaurante no encontrado</h1>
+          <Link href="/restaurants" className="text-green-600 hover:underline mt-4 block">
+            Volver a la lista de restaurantes
           </Link>
         </div>
       </div>
@@ -71,53 +81,26 @@ export default async function ProductPage({ params }: { params: { code: string }
 
       <main className="container mx-auto p-4 md:p-8">
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Columna de la Imagen */}
-            <div className="flex justify-center items-center">
-              <Image
-                src={product.image_url || '/placeholder.png'} // Usar un placeholder si no hay imagen
-                alt={product.product_name}
-                width={400}
-                height={400}
-                objectFit="contain"
-              />
-            </div>
-
-            {/* Columna de la Información */}
-            <div>
-              <h1 className="text-4xl font-bold mb-4">{product.product_name}</h1>
-              
-              {/* Nutri-Score */}
-              {product.nutriscore_grade && (
-                <div className="mb-6">
-                  <h2 className="text-xl font-semibold mb-2">Nutri-Score</h2>
-                  <span className={`text-3xl font-bold uppercase text-${product.nutriscore_grade === 'a' ? 'green' : 'yellow'}-500`}>
-                    {product.nutriscore_grade}
+          <h1 className="text-4xl font-bold mb-4">{restaurant.name}</h1>
+          <p className="text-gray-700 mb-2"><strong>Dirección:</strong> {restaurant.address}</p>
+          {/* Aquí puedes añadir más detalles del restaurante si la interfaz Restaurant los incluye */}
+          {/* Por ejemplo, si tu backend devuelve tags, podrías mostrarlos aquí */}
+          {/* {restaurant.tags && (
+            <div className="mt-4">
+              <h2 className="text-xl font-semibold mb-2">Etiquetas:</h2>
+              <div className="flex flex-wrap gap-2">
+                {restaurant.tags.map((tag, index) => (
+                  <span key={index} className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-sm">
+                    {tag}
                   </span>
-                </div>
-              )}
-
-              {/* Ingredientes */}
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Ingredientes</h2>
-                <p className="text-gray-700">{product.ingredients_text_es || 'No disponible'}</p>
-              </div>
-
-              {/* Tabla Nutricional */}
-              <div>
-                <h2 className="text-xl font-semibold mb-2">Información Nutricional (por 100g)</h2>
-                <ul className="divide-y divide-gray-200">
-                  {Object.entries(nutrientMapping).map(([key, name]) => (
-                    product.nutriments[key] && (
-                      <li key={key} className="py-2 flex justify-between">
-                        <span>{name}</span>
-                        <span className="font-medium">{product.nutriments[key]}</span>
-                      </li>
-                    )
-                  ))}
-                </ul>
+                ))}
               </div>
             </div>
+          )} */}
+          <div className="mt-6">
+            <Link href="/restaurants" className="text-green-600 hover:underline">
+              Volver a la lista de restaurantes
+            </Link>
           </div>
         </div>
       </main>
