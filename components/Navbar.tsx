@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -28,6 +28,11 @@ export default function Navbar() {
         </Link>
         {user ? (
           <>
+            {isAdmin() && (
+              <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4">
+                Dashboard
+              </Link>
+            )}
             <Link href="/profile" className="text-sm font-medium hover:underline underline-offset-4">
               Profile
             </Link>
@@ -35,7 +40,7 @@ export default function Navbar() {
               Favorites
             </Link>
             <Button onClick={handleLogout} variant="ghost" size="sm">
-              Logout
+              Logout ({user.username})
             </Button>
           </>
         ) : (

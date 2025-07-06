@@ -28,7 +28,19 @@ export default function LoginPage() {
     try {
       const response = await api.auth.signIn({ username, password });
       console.log("Login successful:", response);
-      router.push("/dashboard");
+      
+      // Actualizar el estado del usuario en el contexto
+      login(response);
+      
+      // Pequeño delay para asegurar que el estado se actualice
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Redirigir según el rol del usuario
+      if (response.roles && response.roles.includes('ADMIN')) {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
     } catch (err) {
       setError("Usuario o contraseña incorrectos. Por favor, intenta de nuevo.");
       console.error("Login error:", err);
@@ -42,7 +54,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mb-4">
             <User className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

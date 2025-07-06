@@ -68,11 +68,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mb-4">
             <UserPlus className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -109,7 +109,7 @@ export default function RegisterPage() {
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="pl-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                    className="pl-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-green-500 focus:ring-green-500/20"
                     disabled={isLoading}
                   />
                 </div>
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                    className="pl-10 pr-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-green-500 focus:ring-green-500/20"
                     disabled={isLoading}
                   />
                   <button
@@ -184,7 +184,7 @@ export default function RegisterPage() {
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10 pr-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                    className="pl-10 pr-10 h-11 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:border-green-500 focus:ring-green-500/20"
                     disabled={isLoading}
                   />
                   <button
@@ -219,7 +219,7 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full h-11 bg-green-600 hover:bg-green-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                 disabled={isLoading || !passwordValidation.isValid || password !== confirmPassword}
               >
                 {isLoading ? (
@@ -243,7 +243,7 @@ export default function RegisterPage() {
                 ¿Ya tienes una cuenta?{" "}
                 <Link 
                   href="/login" 
-                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+                  className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 font-medium transition-colors"
                 >
                   Inicia sesión aquí
                 </Link>

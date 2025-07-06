@@ -19,6 +19,7 @@ export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState<RestaurantWithCoords[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const fetchRestaurants = async () => {

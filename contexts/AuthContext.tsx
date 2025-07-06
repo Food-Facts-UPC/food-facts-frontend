@@ -14,19 +14,27 @@ interface AuthContextType {
   login: (userData: User) => void;
   logout: () => void;
   isAdmin: () => boolean;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Intentar cargar el usuario desde localStorage al iniciar
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('user');
+      }
     }
+    setIsLoading(false);
   }, []);
 
   const login = (userData: User) => {
@@ -43,8 +51,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return user ? user.roles.includes('ADMIN') : false;
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, login, logout, isAdmin, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

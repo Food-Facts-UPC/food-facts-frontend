@@ -1,10 +1,8 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
       <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-green-50 to-white text-gray-800">
         <div className="container mx-auto flex flex-col items-center justify-center p-4 text-center">
           <h1 className="text-6xl font-extrabold mb-4">
