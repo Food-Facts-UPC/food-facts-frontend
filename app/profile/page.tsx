@@ -10,14 +10,10 @@ import { profilesApi } from "@/lib/services/profilesApi";
 
 interface Profile {
   id: number;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
-  street: string;
-  number: string;
-  city: string;
-  postalCode: string;
-  country: string;
+  streetAddress: string;
+  favoriteRestaurantIds: number[];
 }
 
 export default function ProfilePage() {
@@ -129,7 +125,7 @@ export default function ProfilePage() {
                 </Label>
                 <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <p className="text-gray-900 dark:text-white font-medium">
-                    {profile.firstName} {profile.lastName}
+                    {profile.fullName}
                   </p>
                 </div>
               </div>
@@ -145,63 +141,34 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {(profile.street || profile.city || profile.country) && (
+            {(profile.streetAddress) && (
               <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-green-600" />
                   Dirección
                 </h3>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  {(profile.street || profile.number) && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Dirección
-                      </Label>
-                      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <p className="text-gray-900 dark:text-white">
-                          {profile.street} {profile.number}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {profile.city && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Ciudad
-                      </Label>
-                      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <p className="text-gray-900 dark:text-white">
-                          {profile.city}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {profile.postalCode && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Código Postal
-                      </Label>
-                      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <p className="text-gray-900 dark:text-white">
-                          {profile.postalCode}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  {profile.country && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        País
-                      </Label>
-                      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <p className="text-gray-900 dark:text-white">
-                          {profile.country}
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <p className="text-gray-900 dark:text-white font-medium">
+                    {profile.streetAddress}
+                  </p>
                 </div>
+              </div>
+            )}
+
+            {(profile.favoriteRestaurantIds && profile.favoriteRestaurantIds.length > 0) && (
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Restaurantes Favoritos
+                </h3>
+                <ul className="space-y-2">
+                  {profile.favoriteRestaurantIds.map((restaurantId) => (
+                    <li key={restaurantId} className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <p className="text-gray-900 dark:text-white font-medium">
+                        Restaurante ID: {restaurantId}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </CardContent>
