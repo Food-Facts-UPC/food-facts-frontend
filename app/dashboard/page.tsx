@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, Settings, BarChart3, Plus, Eye, Package, Store } from "lucide-react";
+import ApiStatusCard from "@/components/ApiStatusCard";
 
 export default function DashboardPage() {
   const { user, isAdmin } = useAuth();
@@ -200,6 +201,9 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Estado de la API */}
+          <ApiStatusCard />
         </div>
 
         {/* Quick Actions */}

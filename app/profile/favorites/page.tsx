@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/lib/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Restaurant } from "@/components/Map";
@@ -12,13 +14,20 @@ export default function FavoriteRestaurantsPage() {
   const [availableRestaurants, setAvailableRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const hardcodedProfileId = "1"; // Usar un ID de perfil hardcodeado por ahora
+  const { user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
 
   const fetchProfileAndRestaurants = async () => {
+    if (authLoading) return; // Wait for auth to load
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     try {
       setLoading(true);
-      const profileData = await api.profiles.getById(hardcodedProfileId);
+      const profileData = await api.profiles.getById(user.id.toString());
       setProfile(profileData);
 
       const allRestaurants = await api.restaurants.getAll();
@@ -42,11 +51,12 @@ export default function FavoriteRestaurantsPage() {
 
   useEffect(() => {
     fetchProfileAndRestaurants();
-  }, []);
+  }, [user, authLoading]); // Depend on user and authLoading
 
   const handleAddFavorite = async (restaurantId: string) => {
+    if (!user) return; // Should not happen if redirected
     try {
-      await api.profiles.addFavorite(hardcodedProfileId, restaurantId);
+      await api.profiles.addFavorite(user.id.toString(), restaurantId);
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to add favorite.");
@@ -55,14 +65,27 @@ export default function FavoriteRestaurantsPage() {
   };
 
   const handleRemoveFavorite = async (restaurantId: string) => {
+    if (!user) return; // Should not happen if redirected
     try {
-      await api.profiles.removeFavorite(hardcodedProfileId, restaurantId);
+      await api.profiles.removeFavorite(user.id.toString(), restaurantId);
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to remove favorite.");
       console.error("Error removing favorite:", err);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Cargando autenticación...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Should redirect by useEffect
+  }
 
   if (loading) {
     return (

@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
 interface User {
-  id: string;
+  id: number;
   username: string;
   roles: string[];
   token: string;
@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Intentar cargar el usuario desde localStorage al iniciar
     const storedUser = localStorage.getItem('user');
+    console.log('AuthContext: Stored user from localStorage', storedUser);
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -39,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (userData: User) => {
     setUser(userData);
+    console.log('AuthContext: User data being stored', userData);
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
