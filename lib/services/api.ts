@@ -146,8 +146,8 @@ export const api = {
       }
       return response.json();
     },
-    getById: async (id: string) => {
-      const response = await fetch(`${API_BASE_URL}/profiles/${id}`, {
+    getById: async () => {
+      const response = await fetch(`${API_BASE_URL}/profiles/me`, {
         headers: {
           'Content-Type': 'application/json',
           ...getAuthHeaders(),
@@ -181,8 +181,8 @@ export const api = {
       }
       return response.json();
     },
-    addFavorite: async (profileId: string, restaurantId: string) => {
-      const response = await fetch(`${API_BASE_URL}/profiles/${profileId}/favorites/${restaurantId}`, {
+    addFavorite: async (restaurantId: string) => {
+      const response = await fetch(`${API_BASE_URL}/profiles/favorites/${restaurantId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,8 +194,8 @@ export const api = {
       }
       return response.json();
     },
-    removeFavorite: async (profileId: string, restaurantId: string) => {
-      const response = await fetch(`${API_BASE_URL}/profiles/${profileId}/favorites/${restaurantId}`, {
+    removeFavorite: async (restaurantId: string) => {
+      const response = await fetch(`${API_BASE_URL}/profiles/favorites/${restaurantId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

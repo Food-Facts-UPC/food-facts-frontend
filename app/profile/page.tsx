@@ -43,7 +43,7 @@ export default function ProfilePage() {
       setLoading(true); // Set loading true when fetching starts
       try {
         // Ensure user.id is a string for the API call
-        const data = await api.profiles.getById(user.id.toString());
+        const data = await api.profiles.getById();
         setProfile(data);
       } catch (err: any) {
         if (err.message.includes('404') || err.message.includes('not found')) {

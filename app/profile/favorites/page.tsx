@@ -27,7 +27,7 @@ export default function FavoriteRestaurantsPage() {
 
     try {
       setLoading(true);
-      const profileData = await api.profiles.getById(user.id.toString());
+      const profileData = await api.profiles.getById(); // Call without ID
       setProfile(profileData);
 
       const allRestaurants = await api.restaurants.getAll();
@@ -56,7 +56,7 @@ export default function FavoriteRestaurantsPage() {
   const handleAddFavorite = async (restaurantId: string) => {
     if (!user) return; // Should not happen if redirected
     try {
-      await api.profiles.addFavorite(user.id.toString(), restaurantId);
+      await api.profiles.addFavorite(restaurantId); // Call without profileId
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to add favorite.");
@@ -67,7 +67,7 @@ export default function FavoriteRestaurantsPage() {
   const handleRemoveFavorite = async (restaurantId: string) => {
     if (!user) return; // Should not happen if redirected
     try {
-      await api.profiles.removeFavorite(user.id.toString(), restaurantId);
+      await api.profiles.removeFavorite(restaurantId); // Call without profileId
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to remove favorite.");
