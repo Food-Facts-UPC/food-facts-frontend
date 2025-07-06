@@ -1,14 +1,77 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Settings, BarChart3, Plus, Eye, Package, Store } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SimpleApiStatusCard from "@/components/SimpleApiStatusCard";
+import { 
+  Package, 
+  Store, 
+  Users, 
+  BarChart3, 
+  Settings, 
+  Plus,
+  ArrowRight,
+  Tag,
+  User,
+  Building
+} from "lucide-react";
+import { api } from "@/lib/services/api";
+
+interface DashboardStats {
+  totalRestaurants: number;
+  totalUsers: number;
+  totalTags: number;
+  totalProfiles: number;
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalRestaurants: 0,
+    totalUsers: 0,
+    totalTags: 0,
+    totalProfiles: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    fetchDashboardStats();
+  }, [user, router]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      
+      // Obtener datos de manera paralela
+      const [restaurants, users, tags, profiles] = await Promise.all([
+        api.restaurants.getAll(),
+        api.users.getAll(),
+        api.tags.getAll(),
+        api.profiles.getAll(),
+      ]);
+
+      setStats({
+        totalRestaurants: restaurants.length,
+        totalUsers: users.length,
+        totalTags: tags.length,
+        totalProfiles: profiles.length,
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Si llegamos aquí, el middleware ya verificó que el usuario es admin
   // Solo necesitamos mostrar un loading si aún no se ha cargado el contexto
@@ -38,147 +101,133 @@ export default function DashboardPage() {
 
         {/* Main Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Gestión de Productos */}
+          {/* Gestión de Tags */}
           <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
-                <Package className="w-6 h-6 text-green-600" />
-                Productos
+              <CardTitle className="flex items-center gap-2 text-green-600">
+                <Tag className="w-5 h-5" />
+                Gestión de Tags
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Gestiona la base de datos de productos alimentarios
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex gap-2">
-                <Link href="/dashboard/products" className="flex-1">
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Ver Productos
-                  </Button>
-                </Link>
-                <Link href="/dashboard/products/create">
-                  <Button variant="outline" size="icon" className="border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </Link>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {loading ? "..." : stats.totalTags}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Tags totales
+                </span>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <p>• Añadir nuevos productos</p>
-                <p>• Editar información nutricional</p>
-                <p>• Gestionar categorías</p>
-              </div>
+              <Link href="/dashboard/tags" className="block">
+                <Button variant="outline" className="w-full justify-between">
+                  Ver todos
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
           {/* Gestión de Restaurantes */}
           <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
-                <Store className="w-6 h-6 text-green-600" />
-                Restaurantes
+              <CardTitle className="flex items-center gap-2 text-blue-600">
+                <Store className="w-5 h-5" />
+                Gestión de Restaurantes
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Administra los restaurantes y sus ubicaciones
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex gap-2">
-                <Link href="/dashboard/restaurants" className="flex-1">
-                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Ver Restaurantes
-                  </Button>
-                </Link>
-                <Link href="/dashboard/restaurants/create">
-                  <Button variant="outline" size="icon" className="border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </Link>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {loading ? "..." : stats.totalRestaurants}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Restaurantes totales
+                </span>
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <p>• Añadir nuevos restaurantes</p>
-                <p>• Gestionar ubicaciones</p>
-                <p>• Actualizar información</p>
-              </div>
+              <Link href="/dashboard/restaurants" className="block">
+                <Button variant="outline" className="w-full justify-between">
+                  Ver todos
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
-          {/* Usuarios */}
+          {/* Gestión de Usuarios */}
           <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
-                <Users className="w-6 h-6 text-green-600" />
-                Usuarios
+              <CardTitle className="flex items-center gap-2 text-purple-600">
+                <Users className="w-5 h-5" />
+                Gestión de Usuarios
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Gestiona los usuarios registrados
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/users">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Ver Usuarios
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {loading ? "..." : stats.totalUsers}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Usuarios totales
+                </span>
+              </div>
+              <Link href="/dashboard/users" className="block">
+                <Button variant="outline" className="w-full justify-between">
+                  Ver todos
+                  <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <p>• Ver usuarios activos</p>
-                <p>• Gestionar permisos</p>
-                <p>• Moderar contenido</p>
+            </CardContent>
+          </Card>
+
+          {/* Gestión de Perfiles */}
+          <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-orange-600">
+                <User className="w-5 h-5" />
+                Gestión de Perfiles
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {loading ? "..." : stats.totalProfiles}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  Perfiles totales
+                </span>
               </div>
+              <Link href="/dashboard/profiles" className="block">
+                <Button variant="outline" className="w-full justify-between">
+                  Ver todos
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
           {/* Estadísticas */}
           <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
-                <BarChart3 className="w-6 h-6 text-green-600" />
+              <CardTitle className="flex items-center gap-2 text-indigo-600">
+                <BarChart3 className="w-5 h-5" />
                 Estadísticas
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Visualiza el rendimiento de la aplicación
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link href="/dashboard/analytics">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Ver Estadísticas
-                </Button>
-              </Link>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <p>• Productos más buscados</p>
-                <p>• Restaurantes populares</p>
-                <p>• Actividad de usuarios</p>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Sistema</span>
+                  <span className="text-green-600 font-medium">Activo</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Última actualización</span>
+                  <span className="text-gray-500">Ahora</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Configuración */}
-          <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:shadow-xl transition-shadow">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-white">
-                <Settings className="w-6 h-6 text-green-600" />
-                Configuración
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Ajusta la configuración general
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Link href="/dashboard/settings">
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Configuración
-                </Button>
-              </Link>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                <p>• Configuración general</p>
-                <p>• Preferencias de la app</p>
-                <p>• Configuración de API</p>
-              </div>
+              <Button variant="outline" className="w-full justify-between">
+                Ver detalles
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </CardContent>
           </Card>
 
@@ -192,28 +241,28 @@ export default function DashboardPage() {
             Acciones Rápidas
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Link href="/dashboard/products/create">
-              <Button variant="outline" className="w-full h-12 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+            <Link href="/dashboard/restaurants/create">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 <Plus className="w-4 h-4 mr-2" />
-                Nuevo Producto
+                Crear Restaurante
               </Button>
             </Link>
-            <Link href="/dashboard/restaurants/create">
-              <Button variant="outline" className="w-full h-12 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
-                <Plus className="w-4 h-4 mr-2" />
-                Nuevo Restaurante
+            <Link href="/dashboard/tags">
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                <Tag className="w-4 h-4 mr-2" />
+                Gestionar Tags
               </Button>
             </Link>
             <Link href="/dashboard/users">
-              <Button variant="outline" className="w-full h-12 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
                 <Users className="w-4 h-4 mr-2" />
-                Gestionar Usuarios
+                Ver Usuarios
               </Button>
             </Link>
-            <Link href="/dashboard/analytics">
-              <Button variant="outline" className="w-full h-12 border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Ver Reportes
+            <Link href="/dashboard/profiles">
+              <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                <User className="w-4 h-4 mr-2" />
+                Ver Perfiles
               </Button>
             </Link>
           </div>

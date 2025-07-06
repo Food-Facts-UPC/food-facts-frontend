@@ -1,34 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/lib/services/api";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Package, Plus, Eye, Edit, Trash2, Loader2 } from "lucide-react";
-
-interface Product {
-  id: string;
-  name: string;
-  brand: string;
-  code: string;
-  category: string;
-  nutritionalInfo?: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-}
+import { ArrowLeft, Package, Tag, ArrowRight } from "lucide-react";
+import { api } from "@/lib/services/api";
 
 export default function DashboardProductsPage() {
   const { user, isAdmin } = useAuth();
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -41,36 +24,13 @@ export default function DashboardProductsPage() {
       return;
     }
 
-    fetchProducts();
+    // Redirigir automáticamente a la página de tags después de un breve momento
+    const timer = setTimeout(() => {
+      router.push("/dashboard/tags");
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [user, isAdmin, router]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await api.products.getAll();
-      setProducts(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar los productos');
-      console.error('Error fetching products:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      return;
-    }
-
-    try {
-      await api.products.delete(id);
-      setProducts(products.filter(p => p.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al eliminar el producto');
-      console.error('Error deleting product:', err);
-    }
-  };
 
   if (!user || !isAdmin()) {
     return (
@@ -99,125 +59,96 @@ export default function DashboardProductsPage() {
             <ArrowLeft className="w-4 h-4" />
             Volver al Dashboard
           </Link>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-                <Package className="w-8 h-8 text-green-600" />
-                Gestión de Productos
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Administra los productos alimentarios en la base de datos
-              </p>
-            </div>
-            <Link href="/dashboard/products/create">
-              <Button className="bg-green-600 hover:bg-green-700 text-white">
-                <Plus className="w-4 h-4 mr-2" />
-                Nuevo Producto
-              </Button>
-            </Link>
-          </div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+            <Package className="w-8 h-8 text-green-600" />
+            Gestión de Productos
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Redirigiendo a la gestión de tags...
+          </p>
         </div>
 
-        {/* Content */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-8 shadow-lg">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-              <span className="ml-2 text-gray-600">Cargando productos...</span>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="text-red-500 mb-4">
-                <Package className="w-16 h-16 mx-auto mb-2 opacity-50" />
-                <h3 className="text-xl font-semibold mb-2">Error al cargar productos</h3>
-                <p className="text-sm">{error}</p>
+        {/* Redirect Notice */}
+        <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tag className="w-5 h-5" />
+              Redirigiendo a Tags
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <div className="mb-6">
+                <Package className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                <Tag className="w-12 h-12 text-blue-600 mx-auto mb-4" />
               </div>
-              <Button onClick={fetchProducts} variant="outline">
-                Reintentar
-              </Button>
-            </div>
-          ) : products.length === 0 ? (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                No hay productos registrados
-              </h3>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Gestión de Productos → Tags
+              </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Comienza agregando tu primer producto a la base de datos
+                La gestión de productos ahora se maneja a través de los tags de los restaurantes.
+                Serás redirigido automáticamente en unos momentos.
               </p>
-              <Link href="/dashboard/products/create">
-                <Button className="bg-green-600 hover:bg-green-700 text-white">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Crear Primer Producto
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Productos ({products.length})
-                </h2>
-                <Button onClick={fetchProducts} variant="outline" size="sm">
-                  Actualizar
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <Card key={product.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg text-gray-900 dark:text-white">
-                        {product.name}
-                      </CardTitle>
-                      <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                        <p><strong>Marca:</strong> {product.brand}</p>
-                        <p><strong>Código:</strong> {product.code}</p>
-                        <p><strong>Categoría:</strong> {product.category}</p>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      {product.nutritionalInfo && (
-                        <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded text-sm">
-                          <p className="font-medium mb-2">Información Nutricional:</p>
-                          <div className="grid grid-cols-2 gap-2">
-                            <span>Calorías: {product.nutritionalInfo.calories}</span>
-                            <span>Proteínas: {product.nutritionalInfo.protein}g</span>
-                            <span>Carbohidratos: {product.nutritionalInfo.carbs}g</span>
-                            <span>Grasas: {product.nutritionalInfo.fat}g</span>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="flex gap-2">
-                        <Link href={`/product/${product.code}`} className="flex-1">
-                          <Button variant="outline" size="sm" className="w-full">
-                            <Eye className="w-4 h-4 mr-2" />
-                            Ver
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => router.push(`/dashboard/products/edit/${product.id}`)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDelete(product.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/dashboard/tags">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2">
+                    <Tag className="w-4 h-4" />
+                    Ir a Tags Ahora
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <ArrowLeft className="w-4 h-4" />
+                    Volver al Dashboard
+                  </Button>
+                </Link>
               </div>
             </div>
-          )}
+          </CardContent>
+        </Card>
+
+        {/* Information Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Package className="w-6 h-6 text-green-600" />
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                  ¿Qué son los Productos?
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400">
+                En nuestro sistema, los "productos" se refieren a las categorías y tipos de comida 
+                que ofrecen los restaurantes, los cuales se gestionan a través de los tags.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Tag className="w-6 h-6 text-blue-600" />
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                  ¿Cómo funcionan los Tags?
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400">
+                Los tags permiten categorizar restaurantes por tipo de comida (vegano, italiano, saludable, etc.), 
+                facilitando la búsqueda y filtrado de opciones.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Auto-redirect countdown */}
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg">
+            <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm">
+              Redirigiendo automáticamente a la gestión de tags...
+            </span>
+          </div>
         </div>
       </div>
     </div>
