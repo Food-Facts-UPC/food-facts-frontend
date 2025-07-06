@@ -54,7 +54,7 @@ export default function CreateProfilePage() {
         postalCode,
         country,
       };
-      await api.profiles.create(newProfile);
+      await profilesApi.create(newProfile);
       setSuccess("¡Perfil creado exitosamente!");
       setTimeout(() => {
         router.push("/profile");

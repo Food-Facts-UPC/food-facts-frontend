@@ -42,7 +42,7 @@ export default function CreateRestaurantPage() {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude),
       };
-      await api.restaurants.create(newRestaurant);
+      await restaurantsApi.create(newRestaurant);
       setSuccess("Restaurant created successfully!");
       setName("");
       setAddress("");

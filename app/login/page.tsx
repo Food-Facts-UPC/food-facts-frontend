@@ -26,7 +26,7 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await api.auth.signIn({ username, password });
+      const response = await authApi.signIn({ username, password });
       console.log("Login successful:", response);
       
       // Actualizar el estado del usuario en el contexto

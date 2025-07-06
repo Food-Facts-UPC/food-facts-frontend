@@ -56,7 +56,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     
     try {
-      const response = await api.auth.signUp({ username, password });
+      const response = await authApi.signUp({ username, password });
       console.log("Registration successful:", response);
       router.push("/login");
     } catch (err) {

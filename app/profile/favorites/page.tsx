@@ -67,7 +67,7 @@ export default function FavoriteRestaurantsPage() {
   const handleRemoveFavorite = async (restaurantId: string) => {
     if (!user) return; // Should not happen if redirected
     try {
-      await api.profiles.removeFavorite(restaurantId); // Call without profileId
+      await profilesApi.removeFavorite(restaurantId); // Call without profileId
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to remove favorite.");

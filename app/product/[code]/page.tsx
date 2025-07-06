@@ -20,7 +20,7 @@ export default function RestaurantDetailsPage({ params }: { params: { code: stri
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
       try {
-        const data = await api.restaurants.getById(restaurantId);
+        const data = await restaurantsApi.getById(restaurantId);
         setRestaurant(data);
       } catch (err) {
         setError("Failed to fetch restaurant details.");

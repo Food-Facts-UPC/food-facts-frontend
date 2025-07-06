@@ -26,7 +26,7 @@ export default function SearchPage({ searchParams }: { searchParams: { query: st
     }
 
     try {
-      const data = await api.restaurants.getByTag(query);
+      const data = await restaurantsApi.getByTag(query);
       setRestaurants(data);
     } catch (err) {
       setError("Failed to search restaurants by tag.");

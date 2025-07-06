@@ -24,7 +24,7 @@ export default function RestaurantsPage() {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const data = await api.restaurants.getAll();
+        const data = await restaurantsApi.getAll();
         setRestaurants(data);
       } catch (err) {
         setError('Failed to fetch restaurants');
