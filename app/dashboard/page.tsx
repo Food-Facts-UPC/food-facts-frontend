@@ -7,25 +7,88 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, Settings, BarChart3, Plus, Eye, Package, Store } from "lucide-react";
-import ApiStatusCard from "@/components/ApiStatusCard";
+import SimpleApiStatusCard from "@/components/SimpleApiStatusCard";
 
 export default function DashboardPage() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    console.log('Dashboard: useEffect triggered');
+    console.log('Dashboard: authLoading:', authLoading);
+    console.log('Dashboard: user:', user);
+    console.log('Dashboard: user type:', typeof user);
+    console.log('Dashboard: user roles:', user?.roles);
+    
+    // Debug localStorage directly
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      console.log('Dashboard: Direct localStorage check:', storedUser);
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          console.log('Dashboard: Parsed localStorage user:', parsedUser);
+          console.log('Dashboard: Parsed user roles:', parsedUser.roles);
+        } catch (e) {
+          console.error('Dashboard: Error parsing localStorage:', e);
+        }
+      }
+    }
+    
+    // If authentication is still loading, do nothing
+    if (authLoading) {
+      console.log('Dashboard: Auth still loading, returning early');
+      return;
+    }
+
+    // Check if user exists and is admin
     if (!user) {
-      router.push("/login");
+      console.log('Dashboard: No user found, redirecting to login');
+      setTimeout(() => {
+        router.push("/login");
+      }, 1000); // Add delay to prevent immediate redirect
       return;
     }
 
-    if (!isAdmin()) {
-      router.push("/");
+    console.log('Dashboard: Calling isAdmin()');
+    const adminResult = isAdmin();
+    console.log('Dashboard: isAdmin() result:', adminResult);
+    
+    if (!adminResult) {
+      console.log('Dashboard: User is not admin, redirecting to home');
+      setTimeout(() => {
+        router.push("/");
+      }, 1000); // Add delay to prevent immediate redirect
       return;
     }
-  }, [user, isAdmin, router]);
+    
+    console.log('Dashboard: All checks passed, staying on dashboard');
+  }, [user, isAdmin, router, authLoading]);
 
-  if (!user || !isAdmin()) {
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Verificando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    console.log('Dashboard: No user found, showing redirect message');
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">Redirigiendo a login...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin()) {
+    console.log('Dashboard: User is not admin, showing access denied');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -203,7 +266,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* Estado de la API */}
-          <ApiStatusCard />
+          <SimpleApiStatusCard />
         </div>
 
         {/* Quick Actions */}

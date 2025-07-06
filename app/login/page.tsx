@@ -28,18 +28,19 @@ export default function LoginPage() {
     try {
       const response = await authApi.signIn({ username, password });
       console.log("Login successful:", response);
+      console.log("Login response roles:", response.roles);
+      console.log("Login response full structure:", JSON.stringify(response, null, 2));
       
       // Actualizar el estado del usuario en el contexto
       login(response);
       
-      // Pequeño delay para asegurar que el estado se actualice
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
       // Redirigir según el rol del usuario
-      if (response.roles && response.roles.includes('ADMIN')) {
-        router.push("/dashboard");
+      if (response.roles && (response.roles.includes('ADMIN') || response.roles.includes('ROLE_ADMIN'))) {
+        console.log("Login: User is admin, redirecting to dashboard");
+        window.location.href = "/dashboard";
       } else {
-        router.push("/");
+        console.log("Login: User is not admin, redirecting to home");
+        window.location.href = "/";
       }
     } catch (err) {
       setError("Usuario o contraseña incorrectos. Por favor, intenta de nuevo.");

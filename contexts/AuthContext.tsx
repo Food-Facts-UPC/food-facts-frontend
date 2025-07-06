@@ -24,42 +24,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Intentar cargar el usuario desde localStorage al iniciar
-    const storedUser = localStorage.getItem('user');
-    console.log('AuthContext: Stored user from localStorage', storedUser);
-    if (storedUser) {
+    console.log('AuthContext: useEffect triggered');
+    
+    // Verificar si estamos en el cliente antes de usar localStorage
+    if (typeof window !== 'undefined') {
       try {
-        setUser(JSON.parse(storedUser));
+        const storedUser = localStorage.getItem('user');
+        console.log('AuthContext: Stored user from localStorage', storedUser);
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          console.log('AuthContext: Parsed user data', userData);
+          setUser(userData);
+        } else {
+          console.log('AuthContext: No stored user found');
+        }
       } catch (error) {
-        console.error('Error parsing stored user:', error);
+        console.error('AuthContext: Error parsing stored user:', error);
         localStorage.removeItem('user');
       }
     }
+    
+    // Marcar como cargado después de verificar localStorage
     setIsLoading(false);
   }, []);
 
   const login = (userData: User) => {
+    console.log('AuthContext: login() called with userData:', userData);
     setUser(userData);
-    console.log('AuthContext: User data being stored', userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    console.log('AuthContext: User state updated');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData));
+      console.log('AuthContext: User data stored in localStorage');
+    }
   };
 
   const logout = () => {
+    console.log('AuthContext: logout() called');
     setUser(null);
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+      console.log('AuthContext: User data removed from localStorage');
+    }
   };
 
   const isAdmin = () => {
-    return user ? user.roles.includes('ADMIN') : false;
+    if (!user) {
+      console.log('AuthContext: isAdmin() called, no user');
+      return false;
+    }
+    
+    console.log('AuthContext: isAdmin() called, user roles:', user.roles);
+    const hasAdminRole = user.roles && (user.roles.includes('ROLE_ADMIN') || user.roles.includes('ADMIN'));
+    console.log('AuthContext: hasAdminRole:', hasAdminRole);
+    
+    return hasAdminRole;
   };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isAdmin, isLoading }}>
