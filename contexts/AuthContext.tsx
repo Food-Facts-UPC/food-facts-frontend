@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { useCookies } from '@/lib/hooks/useCookies';
 
 interface User {
   id: number;
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { setCookie, deleteCookie } = useCookies();
 
   useEffect(() => {
     console.log('AuthContext: useEffect triggered');
@@ -55,6 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(userData));
       console.log('AuthContext: User data stored in localStorage');
+      
+      // También guardar en cookie para el middleware
+      setCookie('user', JSON.stringify(userData), 7);
     }
   };
 
@@ -64,6 +69,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user');
       console.log('AuthContext: User data removed from localStorage');
+      
+      // También eliminar cookie
+      deleteCookie('user');
     }
   };
 

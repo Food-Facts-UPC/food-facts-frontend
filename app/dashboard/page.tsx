@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -10,97 +8,16 @@ import { MapPin, Users, Settings, BarChart3, Plus, Eye, Package, Store } from "l
 import SimpleApiStatusCard from "@/components/SimpleApiStatusCard";
 
 export default function DashboardPage() {
-  const { user, isAdmin, isLoading: authLoading } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    console.log('Dashboard: useEffect triggered');
-    console.log('Dashboard: authLoading:', authLoading);
-    console.log('Dashboard: user:', user);
-    console.log('Dashboard: user type:', typeof user);
-    console.log('Dashboard: user roles:', user?.roles);
-    
-    // Debug localStorage directly
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      console.log('Dashboard: Direct localStorage check:', storedUser);
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          console.log('Dashboard: Parsed localStorage user:', parsedUser);
-          console.log('Dashboard: Parsed user roles:', parsedUser.roles);
-        } catch (e) {
-          console.error('Dashboard: Error parsing localStorage:', e);
-        }
-      }
-    }
-    
-    // If authentication is still loading, do nothing
-    if (authLoading) {
-      console.log('Dashboard: Auth still loading, returning early');
-      return;
-    }
-
-    // Check if user exists and is admin
-    if (!user) {
-      console.log('Dashboard: No user found, redirecting to login');
-      setTimeout(() => {
-        router.push("/login");
-      }, 1000); // Add delay to prevent immediate redirect
-      return;
-    }
-
-    console.log('Dashboard: Calling isAdmin()');
-    const adminResult = isAdmin();
-    console.log('Dashboard: isAdmin() result:', adminResult);
-    
-    if (!adminResult) {
-      console.log('Dashboard: User is not admin, redirecting to home');
-      setTimeout(() => {
-        router.push("/");
-      }, 1000); // Add delay to prevent immediate redirect
-      return;
-    }
-    
-    console.log('Dashboard: All checks passed, staying on dashboard');
-  }, [user, isAdmin, router, authLoading]);
-
-  if (authLoading) {
+  // Si llegamos aquí, el middleware ya verificó que el usuario es admin
+  // Solo necesitamos mostrar un loading si aún no se ha cargado el contexto
+  if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Verificando autenticación...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    console.log('Dashboard: No user found, showing redirect message');
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-600 dark:text-gray-400">Redirigiendo a login...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAdmin()) {
-    console.log('Dashboard: User is not admin, showing access denied');
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Acceso Denegado
-          </h1>
-          <p className="text-gray-600 mb-4">
-            No tienes permisos para acceder a esta página
-          </p>
-          <Link href="/">
-            <Button>Volver al inicio</Button>
-          </Link>
+          <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
         </div>
       </div>
     );
