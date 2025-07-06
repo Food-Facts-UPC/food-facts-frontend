@@ -50,7 +50,24 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<{ q
   useEffect(() => {
     if (initialQuery) {
       setQuery(initialQuery);
-      handleSearch({ preventDefault: () => {} } as React.FormEvent); // Simular evento para ejecutar la búsqueda
+      // Ejecutar búsqueda automáticamente
+      const searchAutomatically = async () => {
+        setError(null);
+        setLoading(true);
+        setRestaurants([]);
+
+        try {
+          const data = await api.restaurants.getByTag(initialQuery);
+          setRestaurants(data);
+        } catch (err) {
+          setError("Failed to search restaurants by tag.");
+          console.error("Search error:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      searchAutomatically();
     }
   }, [initialQuery]);
 
