@@ -6,6 +6,7 @@ export interface Restaurant {
   longitude: number;
   stars: number;
   tags: string[];
+  address?: string; // Dirección opcional
 }
 
 export interface CreateRestaurantData {

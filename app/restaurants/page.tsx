@@ -8,16 +8,9 @@ import { api } from '@/lib/services/api';
 import { Restaurant } from '@/components/Map';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { restaurantsApi } from '@/lib/services/restaurantsApi';
-
-// Extender la interfaz Restaurant para incluir latitude y longitude
-interface RestaurantWithCoords extends Restaurant {
-  latitude: number;
-  longitude: number;
-}
 
 export default function RestaurantsPage() {
-  const [restaurants, setRestaurants] = useState<RestaurantWithCoords[]>([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { isAdmin } = useAuth();
@@ -25,7 +18,7 @@ export default function RestaurantsPage() {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const data = await restaurantsApi.getAll();
+        const data = await api.restaurants.getAll();
         setRestaurants(data);
       } catch (err) {
         setError('Failed to fetch restaurants');

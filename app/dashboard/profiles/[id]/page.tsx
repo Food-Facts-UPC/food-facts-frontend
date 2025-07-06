@@ -16,13 +16,21 @@ interface ProfileWithDetails extends Profile {
   favoriteRestaurantIds: number[];
 }
 
-export default function ProfileDetailsPage({ params }: { params: { id: string } }) {
+export default function ProfileDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { user, isAdmin } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileWithDetails | null>(null);
   const [favoriteRestaurants, setFavoriteRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Unwrap the params promise
+    params.then(({ id }) => {
+      setProfileId(id);
+    });
+  }, [params]);
 
   useEffect(() => {
     if (!user) {
@@ -35,16 +43,20 @@ export default function ProfileDetailsPage({ params }: { params: { id: string } 
       return;
     }
 
-    fetchProfile();
-  }, [user, isAdmin, router, params.id]);
+    if (profileId) {
+      fetchProfile();
+    }
+  }, [user, isAdmin, router, profileId]);
 
   const fetchProfile = async () => {
+    if (!profileId) return;
+    
     try {
       setLoading(true);
       setError(null);
       
       // Fetch profile data
-      const profileData = await profilesApi.getById(params.id);
+      const profileData = await profilesApi.getById(profileId);
       setProfile(profileData);
 
       // Fetch favorite restaurants if any

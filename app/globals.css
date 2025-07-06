@@ -3,6 +3,67 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Estilos personalizados para el popup del mapa */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+}
+
+.leaflet-popup-tip {
+  background: white;
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.custom-popup .leaflet-popup-close-button {
+  color: #6b7280;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 8px;
+  right: 8px;
+  transition: all 0.2s ease;
+}
+
+.custom-popup .leaflet-popup-close-button:hover {
+  color: #374151;
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+/* Estilos para el mapa */
+.leaflet-container {
+  font-family: inherit;
+}
+
+/* Marcadores mejorados */
+.leaflet-marker-icon {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.leaflet-marker-icon:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
