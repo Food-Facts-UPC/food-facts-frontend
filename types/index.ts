@@ -39,7 +39,15 @@ export interface Profile {
   phone: string;
   streetAddress: string;
   userId: number;
-  favoriteRestaurants: Restaurant[];
+  favoriteRestaurantIds: number[];
+}
+
+export interface ProfileMe {
+  id: number;
+  fullName: string;
+  email: string;
+  streetAddress: string;
+  favoriteRestaurantIds: number[];
 }
 
 export interface CreateProfileData {

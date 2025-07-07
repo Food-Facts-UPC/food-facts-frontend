@@ -60,7 +60,8 @@ const Map = ({ restaurants }: MapProps) => {
     
     try {
       const profile = await api.profiles.getMe();
-      const favoriteIds = profile.favoriteRestaurants?.map((fav: any) => fav.id || fav.restaurantId) || [];
+      // El backend devuelve favoriteRestaurantIds como Set<Long>, no como array de objetos
+      const favoriteIds = profile.favoriteRestaurantIds || [];
       setFavorites(favoriteIds);
     } catch (error) {
       console.error('Error fetching user favorites:', error);

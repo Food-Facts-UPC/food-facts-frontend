@@ -19,12 +19,15 @@ export const getAuthHeaders = (): Record<string, string> => {
 };
 
 export const handleResponse = async (response: Response) => {
+  console.log('API Response:', response.status, response.url);
+  
   if (!response.ok) {
     if (response.status === 401) {
       // Verificar si estamos en el cliente antes de usar localStorage
       if (typeof window !== 'undefined') {
         console.log('API: 401 error - clearing auth data');
         console.log('Current URL:', window.location.pathname);
+        console.log('Request URL:', response.url);
         
         localStorage.removeItem('user');
         // Eliminar cookie también
@@ -48,8 +51,10 @@ export const handleResponse = async (response: Response) => {
     }
     try {
       const errorData = await response.json();
+      console.error('API Error:', errorData);
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     } catch (e) {
+      console.error('API Error (no JSON):', e);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
   }

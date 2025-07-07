@@ -33,7 +33,8 @@ export default function FavoriteRestaurantsPage() {
       const allRestaurants = await api.restaurants.getAll();
 
       // Filtrar los restaurantes favoritos del perfil
-      const favRestaurantIds = profileData.favoriteRestaurants.map((fav: any) => fav.restaurantId);
+      // El backend devuelve favoriteRestaurantIds como Set<Long>, no como array de objetos
+      const favRestaurantIds = profileData.favoriteRestaurantIds || [];
       const currentFavorites = allRestaurants.filter((r: Restaurant) => favRestaurantIds.includes(r.id));
       setFavoriteRestaurants(currentFavorites);
 

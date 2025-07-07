@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { User, MapPin } from "lucide-react";
 import { profilesApi } from "@/lib/services/profilesApi";
 
+import { ProfileMe } from "@/types";
+
 interface Profile {
   id: number;
   fullName: string;

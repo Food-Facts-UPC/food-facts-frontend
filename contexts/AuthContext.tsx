@@ -28,42 +28,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     console.log('AuthContext: useEffect triggered');
     
-    // Verificar si estamos en el cliente antes de usar localStorage
-    if (typeof window !== 'undefined') {
-      try {
-        const storedUser = localStorage.getItem('user');
-        console.log('AuthContext: Stored user from localStorage', storedUser);
-        if (storedUser) {
-          const userData = JSON.parse(storedUser);
-          console.log('AuthContext: Parsed user data', userData);
-          setUser(userData);
-        } else {
-          console.log('AuthContext: No stored user found');
+    const initializeAuth = async () => {
+      // Verificar si estamos en el cliente antes de usar localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          const storedUser = localStorage.getItem('user');
+          console.log('AuthContext: Stored user from localStorage', storedUser);
+          if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            console.log('AuthContext: Parsed user data', userData);
+            setUser(userData);
+          } else {
+            console.log('AuthContext: No stored user found');
+          }
+        } catch (error) {
+          console.error('AuthContext: Error parsing stored user:', error);
+          localStorage.removeItem('user');
         }
-      } catch (error) {
-        console.error('AuthContext: Error parsing stored user:', error);
-        localStorage.removeItem('user');
+
+        // Escuchar evento de logout automático
+        const handleAuthLogout = () => {
+          console.log('AuthContext: Received auth-logout event');
+          setUser(null);
+          // Asegurar que la cookie también se elimine
+          document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+          localStorage.removeItem('user');
+        };
+
+        window.addEventListener('auth-logout', handleAuthLogout);
+        
+        // Cleanup event listener
+        return () => {
+          window.removeEventListener('auth-logout', handleAuthLogout);
+        };
       }
+    };
 
-      // Escuchar evento de logout automático
-      const handleAuthLogout = () => {
-        console.log('AuthContext: Received auth-logout event');
-        setUser(null);
-        // Asegurar que la cookie también se elimine
-        document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-        localStorage.removeItem('user');
-      };
-
-      window.addEventListener('auth-logout', handleAuthLogout);
-      
-      // Cleanup
-      return () => {
-        window.removeEventListener('auth-logout', handleAuthLogout);
-      };
-    }
-    
-    // Marcar como cargado después de verificar localStorage
-    setIsLoading(false);
+    initializeAuth().finally(() => {
+      // Marcar como cargado después de la inicialización
+      setIsLoading(false);
+    });
   }, []);
 
   const login = (userData: User) => {

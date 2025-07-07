@@ -40,7 +40,8 @@ export default function RestaurantDetailsPage({ params }: { params: Promise<{ co
         // Verificar si es favorito del usuario
         if (user) {
           const profile = await api.profiles.getMe();
-          const favoriteIds = profile.favoriteRestaurants?.map((fav: any) => fav.id || fav.restaurantId) || [];
+          // El backend devuelve favoriteRestaurantIds como Set<Long>, no como array de objetos
+          const favoriteIds = profile.favoriteRestaurantIds || [];
           setIsFavorite(favoriteIds.includes(data.id));
         }
       } catch (err) {
