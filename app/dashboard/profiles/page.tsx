@@ -19,6 +19,7 @@ import {
   Users
 } from "lucide-react";
 import { api } from "@/lib/services/api";
+import { Restaurant } from "@/types";
 
 interface Profile {
   id: number;
@@ -28,7 +29,7 @@ interface Profile {
   phone: string;
   streetAddress: string;
   userId: number;
-  favoriteRestaurants: any[];
+  favoriteRestaurants: Restaurant[];
 }
 
 export default function DashboardProfilesPage() {

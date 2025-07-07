@@ -1,7 +1,18 @@
 import { API_BASE_URL, handleResponse } from './apiBase';
 
+interface SignInCredentials {
+  username: string;
+  password: string;
+}
+
+interface SignUpData {
+  username: string;
+  password: string;
+  email?: string;
+}
+
 export const authApi = {
-  signIn: async (credentials: any) => {
+  signIn: async (credentials: SignInCredentials) => {
     const response = await fetch(`${API_BASE_URL}/authentication/sign-in`, {
       method: 'POST',
       headers: {
@@ -11,7 +22,7 @@ export const authApi = {
     });
     return handleResponse(response);
   },
-  signUp: async (userData: any) => {
+  signUp: async (userData: SignUpData) => {
     const response = await fetch(`${API_BASE_URL}/authentication/sign-up`, {
       method: 'POST',
       headers: {

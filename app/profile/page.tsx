@@ -8,8 +8,6 @@ import { Label } from "@/components/ui/label";
 import { User, MapPin } from "lucide-react";
 import { profilesApi } from "@/lib/services/profilesApi";
 
-import { ProfileMe } from "@/types";
-
 interface Profile {
   id: number;
   fullName: string;
@@ -43,8 +41,9 @@ export default function ProfilePage() {
         // Ensure user.id is a string for the API call
         const data = await profilesApi.getMe();
         setProfile(data);
-      } catch (err: any) {
-        if (err.message.includes('404') || err.message.includes('not found')) {
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        if (errorMessage.includes('404') || errorMessage.includes('not found')) {
           // Profile not found, redirect to create profile page
           router.push("/profile/create");
         } else {

@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, MapPin, Mail, Phone, Home, Globe } from "lucide-react";
+import { User, MapPin, Mail, Globe } from "lucide-react";
 import { profilesApi } from "@/lib/services/profilesApi";
 
 export default function CreateProfilePage() {

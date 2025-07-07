@@ -4,7 +4,7 @@
 import 'leaflet/dist/leaflet.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Icon } from 'leaflet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/lib/hooks/useNotifications';
@@ -31,31 +31,21 @@ const Map = ({ restaurants }: MapProps) => {
 
   useEffect(() => {
     // Este código se ejecuta solo en el lado del cliente
-    const L = require('leaflet');
-    
-    // Crear un icono personalizado más atractivo
-    const icon = new L.Icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+    import('leaflet').then((L) => {
+      // Crear un icono personalizado más atractivo
+      const icon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+      setCustomIcon(icon);
     });
-    setCustomIcon(icon);
   }, []);
 
-  useEffect(() => {
-    // Cargar favoritos del usuario si está autenticado
-    if (user) {
-      fetchUserFavorites();
-    } else {
-      // Limpiar favoritos si no hay usuario
-      setFavorites([]);
-    }
-  }, [user]);
-
-  const fetchUserFavorites = async () => {
+  const fetchUserFavorites = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -70,7 +60,17 @@ const Map = ({ restaurants }: MapProps) => {
         setFavorites([]);
       }
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    // Cargar favoritos del usuario si está autenticado
+    if (user) {
+      fetchUserFavorites();
+    } else {
+      // Limpiar favoritos si no hay usuario
+      setFavorites([]);
+    }
+  }, [user, fetchUserFavorites]);
 
   const handleToggleFavorite = async (restaurantId: number) => {
     if (!user) {

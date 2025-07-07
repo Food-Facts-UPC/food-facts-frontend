@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Store, Plus, MapPin, Star, Tag, Edit, Trash2, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Store, Plus, MapPin, Star, Tag } from "lucide-react";
 import { api } from "@/lib/services/api";
 
 interface Restaurant {
@@ -61,7 +61,7 @@ export default function DashboardRestaurantsPage() {
 
     try {
       setAddingTag(true);
-      await api.restaurants.addTag(selectedRestaurant.id.toString(), { tagName: newTagName.trim() });
+      await api.restaurants.addTag(selectedRestaurant.id.toString(), { name: newTagName.trim() });
       await fetchRestaurants(); // Refresh the list
       setNewTagName("");
       setShowAddTagModal(false);

@@ -1,5 +1,19 @@
 import { API_BASE_URL, getAuthHeaders, handleResponse } from './apiBase';
 
+interface RestaurantData {
+  name: string;
+  address?: string;
+  latitude: number;
+  longitude: number;
+  stars?: number;
+  [key: string]: unknown;
+}
+
+interface TagData {
+  name: string;
+  [key: string]: unknown;
+}
+
 export const restaurantsApi = {
   getAll: async () => {
     const response = await fetch(`${API_BASE_URL}/restaurants`, {
@@ -28,7 +42,7 @@ export const restaurantsApi = {
     });
     return handleResponse(response);
   },
-  create: async (restaurantData: any) => {
+  create: async (restaurantData: RestaurantData) => {
     const response = await fetch(`${API_BASE_URL}/restaurants`, {
       method: 'POST',
       headers: {
@@ -39,7 +53,7 @@ export const restaurantsApi = {
     });
     return handleResponse(response);
   },
-  addTag: async (restaurantId: string, tagData: any) => {
+  addTag: async (restaurantId: string, tagData: TagData) => {
     const response = await fetch(`${API_BASE_URL}/restaurants/${restaurantId}/tags`, {
       method: 'POST',
       headers: {

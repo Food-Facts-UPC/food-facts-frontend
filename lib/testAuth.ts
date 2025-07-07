@@ -30,5 +30,5 @@ export const testAuthFlow = () => {
 
 // Add to window for easy access in browser console
 if (typeof window !== 'undefined') {
-  (window as any).testAuthFlow = testAuthFlow;
+  (window as unknown as { testAuthFlow: typeof testAuthFlow }).testAuthFlow = testAuthFlow;
 }

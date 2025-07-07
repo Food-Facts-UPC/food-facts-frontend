@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Users, Shield, User, Crown, ChevronRight, Loader2, AlertCircle, Eye } from "lucide-react";
+import { ArrowLeft, Users, Shield, User, Crown, ChevronRight } from "lucide-react";
 import { api } from "@/lib/services/api";
 
 interface User {

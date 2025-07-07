@@ -1,5 +1,16 @@
 import { API_BASE_URL, getAuthHeaders, handleResponse } from './apiBase';
 
+interface ProfileData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  streetAddress?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  [key: string]: unknown;
+}
+
 export const profilesApi = {
   getAll: async () => {
     const response = await fetch(`${API_BASE_URL}/profiles`, {
@@ -37,7 +48,7 @@ export const profilesApi = {
     });
     return handleResponse(response);
   },
-  create: async (profileData: any) => {
+  create: async (profileData: ProfileData) => {
     const response = await fetch(`${API_BASE_URL}/profiles`, {
       method: 'POST',
       headers: {

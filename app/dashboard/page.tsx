@@ -8,16 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SimpleApiStatusCard from "@/components/SimpleApiStatusCard";
 import { 
-  Package, 
   Store, 
   Users, 
   BarChart3, 
-  Settings, 
   Plus,
   ArrowRight,
   Tag,
-  User,
-  Building
+  User
 } from "lucide-react";
 import { api } from "@/lib/services/api";
 

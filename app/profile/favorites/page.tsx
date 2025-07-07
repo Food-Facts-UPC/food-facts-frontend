@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import { Restaurant } from "@/components/Map";
 import { api } from "@/lib/services/api";
 
 export default function FavoriteRestaurantsPage() {
-  const [profile, setProfile] = useState<any>(null);
   const [favoriteRestaurants, setFavoriteRestaurants] = useState<Restaurant[]>([]);
   const [availableRestaurants, setAvailableRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +16,7 @@ export default function FavoriteRestaurantsPage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const fetchProfileAndRestaurants = async () => {
+  const fetchProfileAndRestaurants = useCallback(async () => {
     if (authLoading) return; // Wait for auth to load
 
     if (!user) {
@@ -28,7 +27,6 @@ export default function FavoriteRestaurantsPage() {
     try {
       setLoading(true);
       const profileData = await api.profiles.getMe();
-      setProfile(profileData);
 
       const allRestaurants = await api.restaurants.getAll();
 
@@ -48,11 +46,11 @@ export default function FavoriteRestaurantsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [authLoading, user, router]);
 
   useEffect(() => {
     fetchProfileAndRestaurants();
-  }, [user, authLoading]); // Depend on user and authLoading
+  }, [user, authLoading, fetchProfileAndRestaurants]); // Depend on user and authLoading
 
   const handleAddFavorite = async (restaurantId: string) => {
     if (!user) return; // Should not happen if redirected

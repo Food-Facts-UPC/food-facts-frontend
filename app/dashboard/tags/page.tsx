@@ -6,8 +6,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Tag, Plus, Eye, Building, Hash, Store, Loader2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Tag, Eye, Building } from "lucide-react";
 import { api } from "@/lib/services/api";
+import { Restaurant } from "@/types";
 
 interface Tag {
   id: number;
@@ -22,7 +23,7 @@ export default function DashboardTagsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
-  const [tagRestaurants, setTagRestaurants] = useState<any[]>([]);
+  const [tagRestaurants, setTagRestaurants] = useState<Restaurant[]>([]);
   const [loadingRestaurants, setLoadingRestaurants] = useState(false);
 
   useEffect(() => {

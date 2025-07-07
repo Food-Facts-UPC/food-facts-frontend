@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -32,23 +32,7 @@ export default function ProfileDetailsPage({ params }: { params: Promise<{ id: s
     });
   }, [params]);
 
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-
-    if (!isAdmin()) {
-      router.push("/");
-      return;
-    }
-
-    if (profileId) {
-      fetchProfile();
-    }
-  }, [user, isAdmin, router, profileId]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     if (!profileId) return;
     
     try {
@@ -73,7 +57,23 @@ export default function ProfileDetailsPage({ params }: { params: Promise<{ id: s
     } finally {
       setLoading(false);
     }
-  };
+  }, [profileId]);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (!isAdmin()) {
+      router.push("/");
+      return;
+    }
+
+    if (profileId) {
+      fetchProfile();
+    }
+  }, [user, isAdmin, router, profileId, fetchProfile]);
 
   if (!user || !isAdmin()) {
     return (

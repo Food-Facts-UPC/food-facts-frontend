@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Package, Tag, ArrowRight } from "lucide-react";
-import { api } from "@/lib/services/api";
 
 export default function DashboardProductsPage() {
   const { user, isAdmin } = useAuth();
@@ -119,7 +118,7 @@ export default function DashboardProductsPage() {
                 </h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400">
-                En nuestro sistema, los "productos" se refieren a las categorías y tipos de comida 
+                En nuestro sistema, los &quot;productos&quot; se refieren a las categorías y tipos de comida 
                 que ofrecen los restaurantes, los cuales se gestionan a través de los tags.
               </p>
             </CardContent>

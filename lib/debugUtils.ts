@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Función para probar el localStorage directamente
 export const testLocalStorage = () => {
   if (typeof window !== 'undefined') {

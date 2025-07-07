@@ -1,5 +1,13 @@
 import { API_BASE_URL, getAuthHeaders, handleResponse } from './apiBase';
 
+interface ProductData {
+  name: string;
+  description?: string;
+  price?: number;
+  category?: string;
+  [key: string]: unknown;
+}
+
 export const productsApi = {
   getAll: async () => {
     const response = await fetch(`${API_BASE_URL}/products`, {
@@ -28,7 +36,7 @@ export const productsApi = {
     });
     return handleResponse(response);
   },
-  create: async (productData: any) => {
+  create: async (productData: ProductData) => {
     const response = await fetch(`${API_BASE_URL}/products`, {
       method: 'POST',
       headers: {
@@ -39,7 +47,7 @@ export const productsApi = {
     });
     return handleResponse(response);
   },
-  update: async (id: string, productData: any) => {
+  update: async (id: string, productData: ProductData) => {
     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
       method: 'PUT',
       headers: {

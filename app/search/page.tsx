@@ -107,7 +107,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<{ q
 
         {query && restaurants.length > 0 && (
           <div>
-            <h1 className="text-4xl font-bold mb-8">Resultados para "{query}"</h1>
+            <h1 className="text-4xl font-bold mb-8">Resultados para &quot;{query}&quot;</h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {restaurants.map((restaurant) => (
                 <Link key={restaurant.id} href={`/product/${restaurant.id}`}>
@@ -130,7 +130,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<{ q
 
         {query && !loading && restaurants.length === 0 && (
           <div className="text-center py-20">
-            <h1 className="text-3xl font-bold mb-4">No se encontraron restaurantes para "{query}"</h1>
+            <h1 className="text-3xl font-bold mb-4">No se encontraron restaurantes para &quot;{query}&quot;</h1>
             <p className="text-xl text-gray-600">Intenta con otra etiqueta o verifica la ortografía.</p>
           </div>
         )}

@@ -6,6 +6,11 @@ export interface Tag {
   restaurantCount?: number;
 }
 
+interface RestaurantWithTags {
+  tags?: string[];
+  [key: string]: unknown;
+}
+
 export const tagsApi = {
   // Obtener todos los tags únicos desde los restaurantes
   getAll: async (): Promise<Tag[]> => {
@@ -19,7 +24,7 @@ export const tagsApi = {
     
     // Extraer tags únicos y contar cuántos restaurantes los usan
     const tagMap = new Map<string, number>();
-    restaurants.forEach((restaurant: any) => {
+    restaurants.forEach((restaurant: RestaurantWithTags) => {
       if (restaurant.tags) {
         restaurant.tags.forEach((tagName: string) => {
           tagMap.set(tagName, (tagMap.get(tagName) || 0) + 1);
