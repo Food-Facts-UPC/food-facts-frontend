@@ -44,6 +44,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error('AuthContext: Error parsing stored user:', error);
         localStorage.removeItem('user');
       }
+
+      // Escuchar evento de logout automático
+      const handleAuthLogout = () => {
+        console.log('AuthContext: Received auth-logout event');
+        setUser(null);
+        // Asegurar que la cookie también se elimine
+        document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+        localStorage.removeItem('user');
+      };
+
+      window.addEventListener('auth-logout', handleAuthLogout);
+      
+      // Cleanup
+      return () => {
+        window.removeEventListener('auth-logout', handleAuthLogout);
+      };
     }
     
     // Marcar como cargado después de verificar localStorage
@@ -72,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       // También eliminar cookie
       deleteCookie('user');
+      console.log('AuthContext: User cookie deleted');
     }
   };
 

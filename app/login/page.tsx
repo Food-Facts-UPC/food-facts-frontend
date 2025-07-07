@@ -34,6 +34,9 @@ export default function LoginPage() {
       // Actualizar el estado del usuario en el contexto
       login(response);
       
+      // Esperar un poco para que el contexto se actualice
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // Redirigir según el rol del usuario
       if (response.roles && (response.roles.includes('ADMIN') || response.roles.includes('ROLE_ADMIN'))) {
         console.log("Login: User is admin, redirecting to dashboard");

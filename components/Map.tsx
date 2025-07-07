@@ -49,16 +49,25 @@ const Map = ({ restaurants }: MapProps) => {
     // Cargar favoritos del usuario si está autenticado
     if (user) {
       fetchUserFavorites();
+    } else {
+      // Limpiar favoritos si no hay usuario
+      setFavorites([]);
     }
   }, [user]);
 
   const fetchUserFavorites = async () => {
+    if (!user) return;
+    
     try {
       const profile = await api.profiles.getMe();
       const favoriteIds = profile.favoriteRestaurants?.map((fav: any) => fav.id || fav.restaurantId) || [];
       setFavorites(favoriteIds);
     } catch (error) {
       console.error('Error fetching user favorites:', error);
+      // Si hay error de autenticación, limpiar favoritos
+      if (error instanceof Error && error.message.includes('Session expired')) {
+        setFavorites([]);
+      }
     }
   };
 
@@ -95,10 +104,20 @@ const Map = ({ restaurants }: MapProps) => {
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      addNotification({
-        type: 'error',
-        title: 'Error al actualizar favoritos'
-      });
+      
+      // Verificar si es un error de autenticación
+      if (error instanceof Error && error.message.includes('Session expired')) {
+        addNotification({
+          type: 'warning',
+          title: 'Tu sesión ha expirado. Iniciando sesión nuevamente...'
+        });
+        // No redirigir aquí, el apiBase ya se encarga de eso
+      } else {
+        addNotification({
+          type: 'error',
+          title: 'Error al actualizar favoritos'
+        });
+      }
     } finally {
       setLoadingFavorites(prev => prev.filter(id => id !== restaurantId));
     }

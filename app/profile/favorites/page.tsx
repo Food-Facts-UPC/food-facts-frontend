@@ -7,7 +7,6 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Restaurant } from "@/components/Map";
 import { api } from "@/lib/services/api";
-import { profilesApi } from "@/lib/services/profilesApi";
 
 export default function FavoriteRestaurantsPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -68,7 +67,7 @@ export default function FavoriteRestaurantsPage() {
   const handleRemoveFavorite = async (restaurantId: string) => {
     if (!user) return; // Should not happen if redirected
     try {
-      await profilesApi.removeFavorite(restaurantId); // Call without profileId
+      await api.profiles.removeFavorite(restaurantId); // Call without profileId
       await fetchProfileAndRestaurants(); // Refrescar la lista
     } catch (err) {
       setError("Failed to remove favorite.");

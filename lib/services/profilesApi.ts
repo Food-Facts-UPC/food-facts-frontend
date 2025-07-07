@@ -49,7 +49,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   addFavorite: async (restaurantId: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/favorites/${restaurantId}`, {
+    const response = await fetch(`${API_BASE_URL}/profiles/me/favorites/${restaurantId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   removeFavorite: async (restaurantId: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/favorites/${restaurantId}`, {
+    const response = await fetch(`${API_BASE_URL}/profiles/me/favorites/${restaurantId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

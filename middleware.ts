@@ -37,7 +37,28 @@ export function middleware(request: NextRequest) {
   
   // Redirigir usuarios autenticados que intentan acceder a rutas de auth
   if (user && authRoutes.some(route => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    // Verificar que el token no esté expirado antes de redirigir
+    try {
+      // Básica validación del token (puedes mejorar esto)
+      if (user.token && user.username) {
+        // Solo redirigir a dashboard si el usuario es admin, sino a home
+        if (isAdmin(user)) {
+          return NextResponse.redirect(new URL('/dashboard', request.url));
+        } else {
+          return NextResponse.redirect(new URL('/', request.url));
+        }
+      } else {
+        // Token inválido, eliminar cookie y permitir acceso a rutas de auth
+        const response = NextResponse.next();
+        response.cookies.delete('user');
+        return response;
+      }
+    } catch (error) {
+      // Error validando token, eliminar cookie y permitir acceso
+      const response = NextResponse.next();
+      response.cookies.delete('user');
+      return response;
+    }
   }
   
   // Verificar rutas protegidas
