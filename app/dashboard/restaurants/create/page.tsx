@@ -10,7 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Store, Plus, MapPin, Star } from "lucide-react";
 import { api } from "@/lib/services/api";
-import LocationPickerMap from "@/components/LocationPickerMap";
+import dynamic from "next/dynamic";
+
+// Cargar el mapa solo en el cliente para evitar errores de "window is not defined" durante el build
+const LocationPickerMap = dynamic(() => import("@/components/LocationPickerMap"), { ssr: false });
 
 interface RestaurantFormData {
   name: string;

@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { restaurantsApi } from "@/lib/services/restaurantsApi";
-import LocationPickerMap from "@/components/LocationPickerMap";
+import dynamic from "next/dynamic";
+
+const LocationPickerMap = dynamic(() => import("@/components/LocationPickerMap"), { ssr: false });
 
 export default function CreateRestaurantPage() {
   const [name, setName] = useState("");
