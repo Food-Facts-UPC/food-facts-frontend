@@ -180,7 +180,7 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<{ q
                     className="animate-fade-in-up"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <Link href={`/product/${restaurant.id}`}>
+                    <Link href={`/restaurant/${restaurant.id}`}>
                       <Card className="group hover-lift overflow-hidden border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
@@ -188,12 +188,12 @@ export default function SearchPage({ searchParams }: { searchParams: Promise<{ q
                               <CardTitle className="text-lg font-semibold line-clamp-2 text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200">
                                 {restaurant.name}
                               </CardTitle>
-                              <CardDescription className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                              <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                                 <div className="flex items-center gap-2">
                                   <Star className="w-4 h-4 text-yellow-500 fill-current" />
                                   <span>{restaurant.stars}/5</span>
                                 </div>
-                              </CardDescription>
+                              </div>
                             </div>
                             <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                               <MapPin className="w-6 h-6 text-white" />

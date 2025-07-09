@@ -141,7 +141,7 @@ export default function ProductCard({ product, isFavorite = false, onToggleFavor
 
       <CardFooter className="pt-0">
         <div className="flex gap-2 w-full">
-          <Link href={`/product/${product.code}`} className="flex-1">
+          <Link href={`/restaurant/${product.code}`} className="flex-1">
             <Button variant="outline" className="w-full group/btn">
               <Info className="w-4 h-4 mr-2 group-hover/btn:animate-pulse" />
               Ver Detalles

@@ -34,7 +34,7 @@ export default function RestaurantDetailsPage({ params }: { params: Promise<{ co
     const fetchRestaurantDetails = async () => {
       try {
         const data = await api.restaurants.getById(restaurantId);
-        setRestaurant(data);
+          setRestaurant(data);
         
         // Verificar si es favorito del usuario
         if (user) {

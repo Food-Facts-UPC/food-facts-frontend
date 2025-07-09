@@ -125,7 +125,7 @@ const Map = ({ restaurants }: MapProps) => {
   };
 
   const handleViewDetails = (restaurantId: number) => {
-    router.push(`/product/${restaurantId}`);
+    router.push(`/restaurant/${restaurantId}`);
   };
 
   if (!customIcon) {
