@@ -60,7 +60,8 @@ export const restaurantsApi = {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
       },
-      body: JSON.stringify(tagData),
+      // El backend espera la propiedad "tagName" en el cuerpo
+      body: JSON.stringify({ tagName: tagData.name }),
     });
     return handleResponse(response);
   },
