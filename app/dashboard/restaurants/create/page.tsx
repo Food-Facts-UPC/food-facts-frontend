@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Store, Plus, MapPin, Star } from "lucide-react";
 import { api } from "@/lib/services/api";
+import LocationPickerMap from "@/components/LocationPickerMap";
 
 interface RestaurantFormData {
   name: string;
@@ -168,6 +169,23 @@ export default function CreateRestaurantPage() {
                     required
                   />
                 </div>
+              </div>
+
+              {/* Mapa para seleccionar ubicación */}
+              <div>
+                <Label className="flex items-center gap-2 mb-2">
+                  <MapPin className="w-4 h-4" />
+                  Selecciona la ubicación en el mapa (clic para fijar marcador)
+                </Label>
+                <LocationPickerMap
+                  latitude={formData.latitude}
+                  longitude={formData.longitude}
+                  onSelect={(lat, lng) => {
+                    handleInputChange("latitude", lat);
+                    handleInputChange("longitude", lng);
+                  }}
+                  height={300}
+                />
               </div>
 
               {/* Estrellas */}

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { restaurantsApi } from "@/lib/services/restaurantsApi";
+import LocationPickerMap from "@/components/LocationPickerMap";
 
 export default function CreateRestaurantPage() {
   const [name, setName] = useState("");
@@ -121,6 +122,22 @@ export default function CreateRestaurantPage() {
                   onChange={(e) => setLongitude(e.target.value)}
                 />
               </div>
+            </div>
+
+            {/* Mapa para seleccionar ubicación */}
+            <div className="mt-4">
+              <Label className="flex items-center gap-2 mb-2">
+                Selecciona la ubicación en el mapa (clic para fijar marcador)
+              </Label>
+              <LocationPickerMap
+                latitude={parseFloat(latitude) || 0}
+                longitude={parseFloat(longitude) || 0}
+                onSelect={(lat, lng) => {
+                  setLatitude(lat.toString());
+                  setLongitude(lng.toString());
+                }}
+                height={300}
+              />
             </div>
             {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
             {success && <p className="text-green-500 text-sm mt-4">{success}</p>}
