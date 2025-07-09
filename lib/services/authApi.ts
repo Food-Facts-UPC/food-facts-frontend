@@ -13,7 +13,7 @@ interface SignUpData {
 
 export const authApi = {
   signIn: async (credentials: SignInCredentials) => {
-    const response = await fetch(`${API_BASE_URL}/authentication/sign-in`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/authentication/sign-in`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export const authApi = {
     return handleResponse(response);
   },
   signUp: async (userData: SignUpData) => {
-    const response = await fetch(`${API_BASE_URL}/authentication/sign-up`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/authentication/sign-up`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

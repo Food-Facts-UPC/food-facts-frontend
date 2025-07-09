@@ -16,7 +16,7 @@ interface TagData {
 
 export const restaurantsApi = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE_URL}/restaurants`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -25,7 +25,7 @@ export const restaurantsApi = {
     return handleResponse(response);
   },
   getById: async (id: string) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -34,7 +34,7 @@ export const restaurantsApi = {
     return handleResponse(response);
   },
   getByTag: async (tagName: string) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants/tag/${tagName}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants/tag/${tagName}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -43,7 +43,7 @@ export const restaurantsApi = {
     return handleResponse(response);
   },
   create: async (restaurantData: RestaurantData) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export const restaurantsApi = {
     return handleResponse(response);
   },
   addTag: async (restaurantId: string, tagData: TagData) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants/${restaurantId}/tags`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants/${restaurantId}/tags`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

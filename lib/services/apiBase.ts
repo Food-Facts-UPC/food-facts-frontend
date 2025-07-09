@@ -7,9 +7,17 @@ export const getAuthHeaders = (): Record<string, string> => {
     if (user) {
       try {
         const userData = JSON.parse(user);
-        return {
-          'Authorization': `Bearer ${userData.token}`,
-        };
+        // Compatibilidad con distintos nombres de campo para el token
+        const rawToken: string | undefined =
+          userData.token || userData.accessToken || userData.jwt || userData.jwtToken;
+
+        if (rawToken) {
+          // Evitar duplicar el prefijo "Bearer " si el token ya lo incluye
+          const preparedToken = rawToken.startsWith('Bearer ') ? rawToken.slice(7) : rawToken;
+          return {
+            Authorization: `Bearer ${preparedToken}`,
+          };
+        }
       } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
       }

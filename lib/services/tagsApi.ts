@@ -14,7 +14,7 @@ interface RestaurantWithTags {
 export const tagsApi = {
   // Obtener todos los tags únicos desde los restaurantes
   getAll: async (): Promise<Tag[]> => {
-    const response = await fetch(`${API_BASE_URL}/restaurants`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -42,7 +42,7 @@ export const tagsApi = {
   
   // Obtener restaurantes por tag
   getRestaurantsByTag: async (tagName: string) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants/tag/${tagName}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants/tag/${tagName}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -53,7 +53,7 @@ export const tagsApi = {
   
   // Agregar tag a restaurante
   addToRestaurant: async (restaurantId: number, tagName: string) => {
-    const response = await fetch(`${API_BASE_URL}/restaurants/${restaurantId}/tags`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/restaurants/${restaurantId}/tags`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -27,6 +27,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     console.log('AuthContext: useEffect triggered');
+    console.log('AuthContext: localStorage user (init)', typeof window !== 'undefined' ? localStorage.getItem('user') : 'no window');
+    console.log('AuthContext: cookies (init)', typeof document !== 'undefined' ? document.cookie : 'no document');
     
     const initializeAuth = async () => {
       // Verificar si estamos en el cliente antes de usar localStorage
@@ -44,6 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
           console.error('AuthContext: Error parsing stored user:', error);
           localStorage.removeItem('user');
+          console.log('AuthContext: Removed corrupt user from localStorage');
         }
 
         // Escuchar evento de logout automático
@@ -53,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Asegurar que la cookie también se elimine
           document.cookie = 'user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
           localStorage.removeItem('user');
+          console.log('AuthContext: User removed from localStorage and cookie (logout event)');
         };
 
         window.addEventListener('auth-logout', handleAuthLogout);
@@ -67,6 +71,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth().finally(() => {
       // Marcar como cargado después de la inicialización
       setIsLoading(false);
+      if (typeof window !== 'undefined') {
+        console.log('AuthContext: localStorage user (after init)', localStorage.getItem('user'));
+        console.log('AuthContext: cookies (after init)', document.cookie);
+      }
     });
   }, []);
 
@@ -76,10 +84,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log('AuthContext: User state updated');
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(userData));
-      console.log('AuthContext: User data stored in localStorage');
-      
+      console.log('AuthContext: User data stored in localStorage (login)');
       // También guardar en cookie para el middleware
       setCookie('user', JSON.stringify(userData), 7);
+      console.log('AuthContext: User data stored in cookie (login)', document.cookie);
     }
   };
 
@@ -88,11 +96,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user');
-      console.log('AuthContext: User data removed from localStorage');
-      
+      console.log('AuthContext: User data removed from localStorage (logout)');
       // También eliminar cookie
       deleteCookie('user');
-      console.log('AuthContext: User cookie deleted');
+      console.log('AuthContext: User cookie deleted (logout)', document.cookie);
     }
   };
 

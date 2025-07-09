@@ -26,7 +26,7 @@ interface DashboardStats {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
     totalRestaurants: 0,
@@ -37,13 +37,16 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Dashboard: authLoading", authLoading);
+    console.log("Dashboard: user", user);
+    if (authLoading) return;
     if (!user) {
+      console.log("Dashboard: No user, redirecting to /login");
       router.push("/login");
       return;
     }
-
     fetchDashboardStats();
-  }, [user, router]);
+  }, [user, router, authLoading]);
 
   const fetchDashboardStats = async () => {
     try {
@@ -70,14 +73,23 @@ export default function DashboardPage() {
     }
   };
 
-  // Si llegamos aquí, el middleware ya verificó que el usuario es admin
-  // Solo necesitamos mostrar un loading si aún no se ha cargado el contexto
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Cargando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Cargando...</p>
+          <p className="text-gray-600 dark:text-gray-400">Redirigiendo a login...</p>
         </div>
       </div>
     );

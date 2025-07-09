@@ -13,7 +13,7 @@ interface ProfileData {
 
 export const profilesApi = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE_URL}/profiles`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -22,7 +22,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   getMe: async () => {
-    const response = await fetch(`${API_BASE_URL}/profiles/me`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles/me`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -31,7 +31,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   getById: async (id: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -40,7 +40,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   getByEmail: async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/email/${email}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles/email/${email}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -49,7 +49,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   create: async (profileData: ProfileData) => {
-    const response = await fetch(`${API_BASE_URL}/profiles`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   addFavorite: async (restaurantId: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/me/favorites/${restaurantId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles/me/favorites/${restaurantId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export const profilesApi = {
     return handleResponse(response);
   },
   removeFavorite: async (restaurantId: string) => {
-    const response = await fetch(`${API_BASE_URL}/profiles/me/favorites/${restaurantId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/profiles/me/favorites/${restaurantId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

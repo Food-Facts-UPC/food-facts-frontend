@@ -8,7 +8,7 @@ export interface User {
 
 export const usersApi = {
   getAll: async (): Promise<User[]> => {
-    const response = await fetch(`${API_BASE_URL}/users`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
@@ -17,7 +17,7 @@ export const usersApi = {
     return handleResponse(response);
   },
   getById: async (id: number): Promise<User> => {
-    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         ...getAuthHeaders(),
